@@ -126,8 +126,6 @@ io.on("connection", socket => {
                     2: game.players[1].name
                 }
             });
-
-
         } catch (error) {
             socket.emit("gameError", error.message);
         }
