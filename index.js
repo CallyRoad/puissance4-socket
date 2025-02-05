@@ -9,12 +9,13 @@ import {
     NotEnoughPlayerError,
     UsernameAlreadyUsedError
 } from "./errors.js";
+import {CLIENT_URL} from "./env.js";
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: CLIENT_URL,
         methods: ["GET", "POST"],
     }
 });
