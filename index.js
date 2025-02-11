@@ -245,6 +245,7 @@ io.on("connection", socket => {
         }
     });
 
+    console.log("Client connected", socket.id);
 
     // Delete/disconnect the game
     socket.on("disconnect", () => {
