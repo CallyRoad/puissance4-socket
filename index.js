@@ -12,6 +12,13 @@ import {
 import {CLIENT_URL} from "./env.js";
 
 const app = express();
+
+// test route
+app.get("/", (req, res) => {
+    res.send('Server is running');
+});
+
+// create io server
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
@@ -262,6 +269,7 @@ io.on("connection", socket => {
         });
     });
 });
+
 server.listen(4000, () => {
     console.log("Server listening on port 4000");
 });
