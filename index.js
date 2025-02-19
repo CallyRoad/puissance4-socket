@@ -18,6 +18,10 @@ app.get("/", (req, res) => {
     res.send('Server is running');
 });
 
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "healthy" });
+});
+
 // create io server
 const server = createServer(app);
 const io = new Server(server, {
