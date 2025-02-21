@@ -38,9 +38,18 @@ io.on("connection", socket => {
 
     // Initiate session
     socket.on("initSession", (sessionId) => {
+        const existingSession = playerSessions.get(sessionId);
+
+        // We do nothing if a session already exists for the socket.
+        if (existingSession) {
+            return;
+        }
+
+        // If a session already exists, we use it
        if (sessionId) {
             playerSessions.set(socket.id, sessionId);
        } else {
+           // Else we create a new session
            const newSessionId = uuid4();
            playerSessions.set(socket.id, newSessionId);
            socket.emit("sessionCreated", newSessionId);
@@ -249,21 +258,27 @@ io.on("connection", socket => {
         }
     });
 
-    console.log("Client connected", socket.id);
-
     // Delete/disconnect the game
     socket.on("disconnect", () => {
         games.forEach((game, gameId) => {
+
             const playerIndex = game.players.findIndex(player => player.socketId === socket.id);
+
             if (playerIndex !== -1) {
                 if (playerIndex === 0) {
-                    io.to(gameId).emit("hostLeft");
+                    io.to(gameId).emit("hostLeft", {playerName: game.players[playerIndex].name});
                 } else {
                     io.to(game.players[0].socketId).emit("playerLeft", {
                         playerName: game.players[playerIndex].name
                     });
                 }
-                games.delete(gameId);
+
+                game.gameState = "ended";
+
+                // Delete the game after 3 sec
+                setTimeout(() => {
+                    games.delete(gameId);
+                }, 3000)
 
                 game.players.forEach(player => {
                     if (player.socketId !== socket.id) {
